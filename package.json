@@ -1,0 +1,21 @@
+{
+  "name": "mint",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "rollup -c",
+    "watch": "rollup -c -w",
+    "run": "node build/mint.mjs"
+  },
+  "author": "ItsJustMeChris",
+  "license": "MIT",
+  "dependencies": {
+    "colors": "^1.4.0",
+    "eslint": "^8.45.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "prettier": "^2.5.1",
+    "rollup": "^3.26.3",
+    "rollup-plugin-includepaths": "^0.2.4"
+  }
+}
