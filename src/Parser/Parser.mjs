@@ -6,10 +6,18 @@ import {
   Variable,
   Assignment,
   Logical,
+  Call,
 } from 'Expressions/Expressions.mjs';
 
 import {
-  Print, Expression, Let, Block, If, While, Break,
+  Print,
+  Expression,
+  Let,
+  Block,
+  If,
+  While,
+  Break,
+  Function,
 } from 'Statements/Statements.mjs';
 
 import Token from 'Token/Token.mjs';
@@ -121,7 +129,37 @@ class Parser {
       return new Unary(operator, right);
     }
 
-    return this.primary();
+    return this.call();
+  }
+
+  finishCall(callee) {
+    const args = [];
+    if (!this.check(Token.TokenTypes.RIGHT_PAREN)) {
+      do {
+        if (args.length >= 255) {
+          Parser.error(this.peek(), 'Cannot have more than 255 arguments.');
+        }
+        args.push(this.expression());
+      } while (this.match(Token.TokenTypes.COMMA));
+    }
+
+    const paren = this.consume(Token.TokenTypes.RIGHT_PAREN, "Expect ')' after arguments.");
+
+    return new Call(callee, paren, args);
+  }
+
+  call() {
+    let expr = this.primary();
+
+    while (true) {
+      if (this.match(Token.TokenTypes.LEFT_PAREN)) {
+        expr = this.finishCall(expr);
+      } else {
+        break;
+      }
+    }
+
+    return expr;
   }
 
   primary() {
@@ -342,8 +380,30 @@ class Parser {
     return this.expressionStatement();
   }
 
+  function(kind) {
+    const name = this.consume(Token.TokenTypes.IDENTIFIER, `Expect ${kind} name.`);
+    this.consume(Token.TokenTypes.LEFT_PAREN, `Expect '(' after ${kind} name.`);
+    const params = [];
+
+    if (!this.check(Token.TokenTypes.RIGHT_PAREN)) {
+      do {
+        if (params.length >= 255) {
+          Parser.error(this.peek(), 'Cannot have more than 255 parameters.');
+        }
+
+        params.push(this.consume(Token.TokenTypes.IDENTIFIER, 'Expect parameter name.'));
+      } while (this.match(Token.TokenTypes.COMMA));
+    }
+
+    this.consume(Token.TokenTypes.RIGHT_PAREN, "Expect ')' after parameters.");
+    this.consume(Token.TokenTypes.LEFT_BRACE, `Expect '{' before ${kind} body.`);
+    const body = this.block();
+    return new Function(name, params, body);
+  }
+
   declaration() {
     try {
+      if (this.match(Token.TokenTypes.FUNCTION)) return this.function('function');
       if (this.match(Token.TokenTypes.LET)) return this.letDeclaration();
       return this.statement();
     } catch (e) {

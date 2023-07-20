@@ -2,16 +2,24 @@ import { Expression } from 'Expressions/Expressions.mjs';
 import { Statement } from 'Statements/Statements.mjs';
 import Token from 'Token/Token.mjs';
 import Environment from 'Environment/Environment.mjs';
+import Callable from 'Callable/Callable.mjs';
 
 class Interpreter {
   Mint = null;
 
-  static Environment = new Environment();
+  static globals = new Environment();
+
+  static Environment = Interpreter.globals;
 
   static LoopDepth = 0;
 
   static Bind(Mint) {
     Interpreter.Mint = Mint;
+
+    Interpreter.globals.define(
+      'now',
+      Callable.FromNative(() => Date.now()),
+    );
   }
 
   static {
@@ -22,6 +30,7 @@ class Interpreter {
     Expression.visitVariableExpression = Interpreter.visitVariableExpression;
     Expression.visitAssignmentExpression = Interpreter.visitAssignmentExpression;
     Expression.visitLogicalExpression = Interpreter.visitLogicalExpression;
+    Expression.visitCallExpression = Interpreter.visitCallExpression;
 
     Statement.visitExpressionStatement = Interpreter.visitExpressionStatement;
     Statement.visitPrintStatement = Interpreter.visitPrintStatement;
@@ -30,6 +39,7 @@ class Interpreter {
     Statement.visitIfStatement = Interpreter.visitIfStatement;
     Statement.visitWhileStatement = Interpreter.visitWhileStatement;
     Statement.visitBreakStatement = Interpreter.visitBreakStatement;
+    Statement.visitFunctionStatement = Interpreter.visitFunctionStatement;
   }
 
   static stringify(object) {
@@ -43,6 +53,32 @@ class Interpreter {
     }
 
     return object.toString();
+  }
+
+  static visitFunctionStatement(functionStatement) {
+    const func = Callable.FromExpression(functionStatement);
+    Interpreter.Environment.define(functionStatement.name.lexeme, func);
+  }
+
+  static visitCallExpression(call) {
+    const callee = Interpreter.evaluate(call.callee);
+
+    const args = [];
+    call.args.forEach((arg) => {
+      args.push(Interpreter.evaluate(arg));
+    }, this);
+
+    if (!(callee instanceof Callable)) {
+      throw new Error('Runtime Error: Can only call functions and classes.');
+    }
+
+    if (args.length !== callee.arity()) {
+      throw new Error(
+        `Runtime Error: Expected ${callee.arity()} arguments but got ${args.length}.`,
+      );
+    }
+
+    return callee.call(Interpreter, args);
   }
 
   static visitBreakStatement() {
@@ -85,17 +121,21 @@ class Interpreter {
     }
   }
 
-  static visitBlockStatement(block) {
+  static executeBlock(statements, environment) {
     const previous = Interpreter.Environment;
 
     try {
-      Interpreter.Environment = new Environment(previous);
-      block.statements.forEach((statement) => {
+      Interpreter.Environment = environment;
+      statements.forEach((statement) => {
         Interpreter.execute(statement);
       });
     } finally {
       Interpreter.Environment = previous;
     }
+  }
+
+  static visitBlockStatement(block) {
+    Interpreter.executeBlock(block.statements, new Environment(Interpreter.Environment));
   }
 
   static visitLetStatement(statement) {

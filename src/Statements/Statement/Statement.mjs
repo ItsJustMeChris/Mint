@@ -43,6 +43,15 @@ class Statement {
     return Statement.parenthesize('break');
   }
 
+  static visitFunctionStatement(functionStatement) {
+    return Statement.parenthesize(
+      'function',
+      functionStatement.name,
+      functionStatement.params,
+      functionStatement.body,
+    );
+  }
+
   static print(statement) {
     return Statement.accept(statement);
   }

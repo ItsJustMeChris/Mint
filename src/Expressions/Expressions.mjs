@@ -6,7 +6,8 @@ import Grouping from 'Expressions/Grouping/Grouping.mjs';
 import Variable from 'Expressions/Variable/Variable.mjs';
 import Assignment from 'Expressions/Assignment/Assignment.mjs';
 import Logical from 'Expressions/Logical/Logical.mjs';
+import Call from 'Expressions/Call/Call.mjs';
 
 export {
-  Binary, Expression, Unary, Literal, Grouping, Variable, Assignment, Logical,
+  Binary, Expression, Unary, Literal, Grouping, Variable, Assignment, Logical, Call,
 };

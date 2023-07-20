@@ -39,6 +39,10 @@ class Expression {
     return Expression.parenthesize(logical.operator.lexeme, logical.left, logical.right);
   }
 
+  static visitCallExpression(call) {
+    return Expression.parenthesize(call.callee, ...call.args);
+  }
+
   static print(expression) {
     return expression.accept(expression);
   }
