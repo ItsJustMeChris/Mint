@@ -52,6 +52,10 @@ class Statement {
     );
   }
 
+  static visitReturnStatement(returnStatement) {
+    return Statement.parenthesize('return', returnStatement.value);
+  }
+
   static print(statement) {
     return Statement.accept(statement);
   }

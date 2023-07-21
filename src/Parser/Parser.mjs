@@ -18,6 +18,7 @@ import {
   While,
   Break,
   Function,
+  Return,
 } from 'Statements/Statements.mjs';
 
 import Token from 'Token/Token.mjs';
@@ -369,11 +370,25 @@ class Parser {
     return new Break();
   }
 
+  returnStatement() {
+    const keyword = this.previous();
+    let value = null;
+
+    if (!this.check(Token.TokenTypes.SEMICOLON)) {
+      value = this.expression();
+    }
+
+    console.log(this.peek());
+    this.consume(Token.TokenTypes.SEMICOLON, "Expect ';' after return value.");
+    return new Return(keyword, value);
+  }
+
   statement() {
     if (this.match(Token.TokenTypes.BREAK)) return this.break();
     if (this.match(Token.TokenTypes.FOR)) return this.forStatement();
     if (this.match(Token.TokenTypes.IF)) return this.ifStatement();
     if (this.match(Token.TokenTypes.PRINT)) return this.printStatement();
+    if (this.match(Token.TokenTypes.RETURN)) return this.returnStatement();
     if (this.match(Token.TokenTypes.WHILE)) return this.whileStatement();
     if (this.match(Token.TokenTypes.LEFT_BRACE)) return new Block(this.block());
 

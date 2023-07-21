@@ -3,6 +3,7 @@ import { Statement } from 'Statements/Statements.mjs';
 import Token from 'Token/Token.mjs';
 import Environment from 'Environment/Environment.mjs';
 import Callable from 'Callable/Callable.mjs';
+import { ReturnException } from 'Exceptions/Exceptions.mjs';
 
 class Interpreter {
   Mint = null;
@@ -40,6 +41,7 @@ class Interpreter {
     Statement.visitWhileStatement = Interpreter.visitWhileStatement;
     Statement.visitBreakStatement = Interpreter.visitBreakStatement;
     Statement.visitFunctionStatement = Interpreter.visitFunctionStatement;
+    Statement.visitReturnStatement = Interpreter.visitReturnStatement;
   }
 
   static stringify(object) {
@@ -53,6 +55,13 @@ class Interpreter {
     }
 
     return object.toString();
+  }
+
+  static visitReturnStatement(returnStatement) {
+    let value = null;
+    if (returnStatement.value !== null) value = Interpreter.evaluate(returnStatement.value);
+
+    throw new ReturnException(value);
   }
 
   static visitFunctionStatement(functionStatement) {
@@ -233,12 +242,19 @@ class Interpreter {
     },
     Greatness: (left, right) => {
       if (typeof left === 'number' && typeof right === 'number') return left > right;
+      if (typeof left === 'number' && typeof right === 'number') return left > right;
       if (typeof left === 'string' && typeof right === 'string') return left.length > right.length;
       if (typeof left === 'string' && typeof right === 'number') return left.length > right;
       if (typeof left === 'number' && typeof right === 'string') return left > right.length;
       throw new Error('Runtime Error: Operands cannot be compared.');
     },
-    Lessness: (left, right) => !Interpreter.Operators.Greatness(left, right),
+    Lessness: (left, right) => {
+      if (typeof left === 'number' && typeof right === 'number') return left < right;
+      if (typeof left === 'string' && typeof right === 'string') return left.length < right.length;
+      if (typeof left === 'string' && typeof right === 'number') return left.length < right;
+      if (typeof left === 'number' && typeof right === 'string') return left < right.length;
+      throw new Error('Runtime Error: Operands cannot be compared.');
+    },
     GreatnessEqual: (left, right) => {
       if (typeof left === 'number' && typeof right === 'number') return left >= right;
       if (typeof left === 'string' && typeof right === 'string') return left.length >= right.length;
@@ -246,7 +262,13 @@ class Interpreter {
       if (typeof left === 'number' && typeof right === 'string') return left >= right.length;
       throw new Error('Runtime Error: Operands cannot be compared.');
     },
-    LessnessEqual: (left, right) => !Interpreter.Operators.GreatnessEqual(left, right),
+    LessnessEqual: (left, right) => {
+      if (typeof left === 'number' && typeof right === 'number') return left <= right;
+      if (typeof left === 'string' && typeof right === 'string') return left.length <= right.length;
+      if (typeof left === 'string' && typeof right === 'number') return left.length <= right;
+      if (typeof left === 'number' && typeof right === 'string') return left <= right.length;
+      throw new Error('Runtime Error: Operands cannot be compared.');
+    },
     Divide: (left, right) => {
       if (right === 0) throw new Error('Runtime Error: Cannot divide by zero.');
       if (typeof left === 'number' && typeof right === 'number') return left / right;

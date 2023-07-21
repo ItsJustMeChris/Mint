@@ -7,7 +7,8 @@ import If from 'Statements/If/If.mjs';
 import While from 'Statements/While/While.mjs';
 import Break from 'Statements/Break/Break.mjs';
 import Function from 'Statements/Function/Function.mjs';
+import Return from 'Statements/Return/Return.mjs';
 
 export {
-  Print, Expression, Statement, Let, Block, If, While, Break, Function,
+  Print, Expression, Statement, Let, Block, If, While, Break, Function, Return,
 };

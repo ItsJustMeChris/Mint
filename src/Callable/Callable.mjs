@@ -1,4 +1,5 @@
 import Environment from 'Environment/Environment.mjs';
+import { ReturnException } from 'Exceptions/Exceptions.mjs';
 
 class Callable {
   constructor({ arity, call, toString }) {
@@ -16,7 +17,13 @@ class Callable {
           env.define(expression.params[i].lexeme, args[i]);
         }
 
-        interpreter.executeBlock(expression.body, env);
+        try {
+          interpreter.executeBlock(expression.body, env);
+        } catch (error) {
+          if (error instanceof ReturnException) {
+            return error.value;
+          }
+        }
 
         return null;
       },
