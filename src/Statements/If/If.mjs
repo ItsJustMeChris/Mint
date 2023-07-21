@@ -9,7 +9,7 @@ class If extends Statement {
   }
 
   accept() {
-    return Statement.visitIfStatement(this);
+    return Statement.Visit(this);
   }
 }
 

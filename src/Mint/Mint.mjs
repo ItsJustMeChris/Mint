@@ -6,6 +6,7 @@ import { readFileSync } from 'fs';
 import path from 'path';
 import ReadLine from 'readline';
 import { Expression, Print } from 'Statements/Statements.mjs';
+import Resolver from 'Resolver/Resolver.mjs';
 
 class Mint {
   hadError = false;
@@ -18,6 +19,8 @@ class Mint {
 
   static Parser = Parser;
 
+  static Resolver = Resolver;
+
   static {
     Logger.info('Initializing Mint');
 
@@ -28,6 +31,7 @@ class Mint {
     Interpreter.Bind(this);
     Scanner.Bind(this);
     Parser.Bind(this);
+    Resolver.Bind(this);
   }
 
   static Boot() {
@@ -58,7 +62,9 @@ class Mint {
       statements[0] = new Print(statements[0].expression);
     }
 
-    Interpreter.Interpret(statements);
+    Resolver.Overload().resolveStatements(statements).Release();
+    if (Mint.hadError) return null;
+    Interpreter.Overload().Interpret(statements).Release();
     return null;
   }
 

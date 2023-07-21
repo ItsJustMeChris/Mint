@@ -8,7 +8,7 @@ class Let extends Statement {
   }
 
   accept() {
-    return Statement.visitLetStatement(this);
+    return Statement.Visit(this);
   }
 }
 

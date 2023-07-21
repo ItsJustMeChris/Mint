@@ -7,7 +7,7 @@ class Expression extends Statement {
   }
 
   accept() {
-    return Expression.visitExpressionStatement(this);
+    return Statement.Visit(this);
   }
 }
 

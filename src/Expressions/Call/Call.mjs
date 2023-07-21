@@ -9,7 +9,7 @@ class Call extends Expression {
   }
 
   accept() {
-    return Expression.visitCallExpression(this);
+    return Expression.Visit(this);
   }
 }
 

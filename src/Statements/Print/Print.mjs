@@ -7,7 +7,7 @@ class Print extends Statement {
   }
 
   accept() {
-    return Statement.visitPrintStatement(this);
+    return Statement.Visit(this);
   }
 }
 

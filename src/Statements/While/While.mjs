@@ -8,7 +8,7 @@ class While extends Statement {
   }
 
   accept() {
-    return Statement.visitWhileStatement(this);
+    return Statement.Visit(this);
   }
 }
 

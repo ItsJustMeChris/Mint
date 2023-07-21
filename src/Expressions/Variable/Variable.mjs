@@ -7,7 +7,7 @@ class Variable extends Expression {
   }
 
   accept() {
-    return Expression.visitVariableExpression(this);
+    return Expression.Visit(this);
   }
 }
 

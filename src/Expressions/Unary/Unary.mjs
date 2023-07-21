@@ -8,7 +8,7 @@ class Unary extends Expression {
   }
 
   accept() {
-    return Expression.visitUnaryExpression(this);
+    return Expression.Visit(this);
   }
 }
 

@@ -9,7 +9,7 @@ class Function extends Statement {
   }
 
   accept() {
-    return Statement.visitFunctionStatement(this);
+    return Statement.Visit(this);
   }
 }
 

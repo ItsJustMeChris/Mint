@@ -8,7 +8,7 @@ class Assignment extends Expression {
   }
 
   accept() {
-    return Expression.visitAssignmentExpression(this);
+    return Expression.Visit(this);
   }
 }
 

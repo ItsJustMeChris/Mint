@@ -8,7 +8,7 @@ class Return extends Statement {
   }
 
   accept() {
-    return Statement.visitReturnStatement(this);
+    return Statement.Visit(this);
   }
 }
 

@@ -7,7 +7,7 @@ class Grouping extends Expression {
   }
 
   accept() {
-    return Expression.visitGroupingExpression(this);
+    return Expression.Visit(this);
   }
 }
 

@@ -2,7 +2,7 @@ import Statement from 'Statements/Statement/Statement.mjs';
 
 class Break extends Statement {
   accept() {
-    return Statement.visitBreakStatement(this);
+    return Statement.Visit(this);
   }
 }
 

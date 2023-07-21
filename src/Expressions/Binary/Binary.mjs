@@ -9,7 +9,7 @@ class Binary extends Expression {
   }
 
   accept() {
-    return Expression.visitBinaryExpression(this);
+    return Expression.Visit(this);
   }
 }
 

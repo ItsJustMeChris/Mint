@@ -9,7 +9,7 @@ class Logical extends Expression {
   }
 
   accept() {
-    return Expression.visitLogicalExpression(this);
+    return Expression.Visit(this);
   }
 }
 

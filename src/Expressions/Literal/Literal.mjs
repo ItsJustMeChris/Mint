@@ -7,7 +7,7 @@ class Literal extends Expression {
   }
 
   accept() {
-    return Expression.visitLiteralExpression(this);
+    return Expression.Visit(this);
   }
 }
 

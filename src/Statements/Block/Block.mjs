@@ -7,7 +7,7 @@ class Block extends Statement {
   }
 
   accept() {
-    return Statement.visitBlockStatement(this);
+    return Statement.Visit(this);
   }
 }
 

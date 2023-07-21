@@ -10,38 +10,43 @@ class Expression {
     return output;
   }
 
-  static visitBinaryExpression(binary) {
-    return Expression.parenthesize(binary.operator.lexeme, binary.left, binary.right);
+  static Visit(expression) {
+    if (Expression.Overloads[`visit${expression.constructor.name}Expression`] != null) {
+      return Expression.Overloads[`visit${expression.constructor.name}Expression`](expression);
+    }
+
+    return Expression.Visitors[`visit${expression.constructor.name}Expression`](expression);
   }
 
-  static visitGroupingExpression(grouping) {
-    return Expression.parenthesize('group', grouping.expression);
-  }
+  static Overloads = {};
 
-  static visitLiteralExpression(literal) {
-    if (literal.value == null) return 'null';
-    return literal.value.toString();
-  }
-
-  static visitUnaryExpression(unary) {
-    return Expression.parenthesize(unary.operator.lexeme, unary.right);
-  }
-
-  static visitVariableExpression(variable) {
-    return variable.name.lexeme;
-  }
-
-  static visitAssignmentExpression(assignment) {
-    return Expression.parenthesize(assignment.name.lexeme, assignment.value);
-  }
-
-  static visitLogicalExpression(logical) {
-    return Expression.parenthesize(logical.operator.lexeme, logical.left, logical.right);
-  }
-
-  static visitCallExpression(call) {
-    return Expression.parenthesize(call.callee, ...call.args);
-  }
+  static Visitors = {
+    visitBinaryExpression(binary) {
+      return Expression.parenthesize(binary.operator.lexeme, binary.left, binary.right);
+    },
+    visitGroupingExpression(grouping) {
+      return Expression.parenthesize('group', grouping.expression);
+    },
+    visitLiteralExpression(literal) {
+      if (literal.value == null) return 'null';
+      return literal.value.toString();
+    },
+    visitUnaryExpression(unary) {
+      return Expression.parenthesize(unary.operator.lexeme, unary.right);
+    },
+    visitVariableExpression(variable) {
+      return variable.name.lexeme;
+    },
+    visitAssignmentExpression(assignment) {
+      return Expression.parenthesize(assignment.name.lexeme, assignment.value);
+    },
+    visitLogicalExpression(logical) {
+      return Expression.parenthesize(logical.operator.lexeme, logical.left, logical.right);
+    },
+    visitCallExpression(call) {
+      return Expression.parenthesize(call.callee, ...call.args);
+    },
+  };
 
   static print(expression) {
     return expression.accept(expression);

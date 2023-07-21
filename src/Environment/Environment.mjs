@@ -21,6 +21,19 @@ class Environment {
     return this.values[name];
   }
 
+  ancestor(distance) {
+    let environment = this;
+    for (let i = 0; i < distance; i += 1) {
+      environment = environment.enclosing;
+    }
+
+    return environment;
+  }
+
+  getAt(distance, name) {
+    return this.ancestor(distance).values[name];
+  }
+
   assign(name, value) {
     if (this.values[name] === undefined) {
       if (this.enclosing !== null) {
@@ -31,6 +44,10 @@ class Environment {
     }
 
     this.values[name] = value;
+  }
+
+  assignAt(distance, name, value) {
+    this.ancestor(distance).values[name] = value;
   }
 }
 
