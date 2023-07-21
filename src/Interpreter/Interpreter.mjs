@@ -65,7 +65,7 @@ class Interpreter {
   }
 
   static visitFunctionStatement(functionStatement) {
-    const func = Callable.FromExpression(functionStatement);
+    const func = Callable.FromExpression(functionStatement, Interpreter.Environment);
     Interpreter.Environment.define(functionStatement.name.lexeme, func);
   }
 
