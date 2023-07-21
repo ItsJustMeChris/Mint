@@ -135,17 +135,18 @@ class Parser {
 
   finishCall(callee) {
     const args = [];
+
     if (!this.check(Token.TokenTypes.RIGHT_PAREN)) {
       do {
         if (args.length >= 255) {
           Parser.error(this.peek(), 'Cannot have more than 255 arguments.');
         }
+
         args.push(this.expression());
       } while (this.match(Token.TokenTypes.COMMA));
     }
 
     const paren = this.consume(Token.TokenTypes.RIGHT_PAREN, "Expect ')' after arguments.");
-
     return new Call(callee, paren, args);
   }
 
@@ -180,6 +181,10 @@ class Parser {
       const expr = this.expression();
       this.consume(Token.TokenTypes.RIGHT_PAREN, "Expect ')' after expression.");
       return new Grouping(expr);
+    }
+
+    if (this.match(Token.TokenTypes.FUNCTION)) {
+      return this.function('anonymous');
     }
 
     console.log('Failed on primary', this.peek());
@@ -378,7 +383,6 @@ class Parser {
       value = this.expression();
     }
 
-    console.log(this.peek());
     this.consume(Token.TokenTypes.SEMICOLON, "Expect ';' after return value.");
     return new Return(keyword, value);
   }
@@ -396,7 +400,12 @@ class Parser {
   }
 
   function(kind) {
-    const name = this.consume(Token.TokenTypes.IDENTIFIER, `Expect ${kind} name.`);
+    let name = null;
+
+    if (this.match(Token.TokenTypes.IDENTIFIER)) {
+      name = this.previous();
+    }
+
     this.consume(Token.TokenTypes.LEFT_PAREN, `Expect '(' after ${kind} name.`);
     const params = [];
 

@@ -1,5 +1,5 @@
 import { Expression } from 'Expressions/Expressions.mjs';
-import { Statement } from 'Statements/Statements.mjs';
+import { Statement, Function } from 'Statements/Statements.mjs';
 import Token from 'Token/Token.mjs';
 import Environment from 'Environment/Environment.mjs';
 import Callable from 'Callable/Callable.mjs';
@@ -74,7 +74,12 @@ class Interpreter {
 
     const args = [];
     call.args.forEach((arg) => {
-      args.push(Interpreter.evaluate(arg));
+      if (arg instanceof Function) {
+        const anon = Callable.FromExpression(arg, Interpreter.Environment);
+        args.push(anon);
+      } else {
+        args.push(Interpreter.evaluate(arg));
+      }
     }, this);
 
     if (!(callee instanceof Callable)) {

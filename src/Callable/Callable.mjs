@@ -30,7 +30,7 @@ class Callable {
 
         return null;
       },
-      toString: () => `<func ${expression.name.lexeme}>`,
+      toString: () => `<func ${expression.name ? expression.name.lexeme : 'anonymous'}>`,
     });
   }
 
