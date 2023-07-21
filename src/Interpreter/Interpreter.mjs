@@ -158,7 +158,11 @@ class Interpreter {
       value = Interpreter.evaluate(statement.initializer);
     }
 
-    Interpreter.Environment.define(statement.name.lexeme, value);
+    try {
+      Interpreter.Environment.define(statement.name.lexeme, value);
+    } catch (e) {
+      Interpreter.Mint.Logger.error(e);
+    }
   }
 
   static visitAssignmentExpression(assignment) {
